@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from modele import simulation
+from modele import simulation , montant_epargne_cible
+
 
 # --- Configuration générale ---
 st.set_page_config(
@@ -78,10 +79,19 @@ st.sidebar.markdown("**Asset Management West Africa Limited**")
 st.title("💼 Simulateur d'Investissement UCAMWAL")
 
 st.write("""
-UCAMWAL (United Capital Asset Management West Africa Limited) est une société de gestion d'OPCVM 
-offrant des produits d'investissement adaptés aux besoins des investisseurs individuels et institutionnels.
+**UCAMWAL (United Capital Asset Management West Africa Limited)** est une société de gestion d’OPCVM qui propose des fonds adaptés aux besoins des investisseurs particuliers et institutionnels.
 
-Ce simulateur vous permet d’estimer la **valeur future** de votre investissement selon le fonds choisi et vos contributions.
+Ce simulateur vous permet d’estimer :
+
+- 💰 le montant à épargner pour que les rendements couvrent une dépense annuelle,
+
+- 📈 la valeur future de votre capital selon vos contributions et le fonds choisi.
+
+Fonds disponibles et rendements annuels attendus :
+
+- **💎 United Capital Diamond Fund**  rendement annuel attendu : 8 %
+
+- **🔹 United Capital Sapphire Fund**  rendement annuel attendu : 9 %
 """)
 
 # --- Saisie des informations ---
@@ -129,12 +139,76 @@ if st.button("🚀 Lancer la simulation", use_container_width=True):
 
 
 
+# Dictionnaire des fonds et leurs rendements annuels
+taux_fonds = {
+    "United Capital Diamond": 0.08,
+    "United Capital Sapphire": 0.09
+}
 
 
 
+with st.expander("🧮 Paramètres de l’épargne pour couvrir une dépense", expanded=False):
+    col1, col2 = st.columns(2)
+
+    with col1:
+        choix = st.checkbox("Cocher pour estimer combien épargner pour que le rendement couvre votre charge")
+
+        depense_annuelle = st.number_input(
+            "Dépense annuelle à couvrir ou capital cible (FCFA)",
+            min_value=0,
+            value=1000
+        )
+
+        duree_mois = st.number_input(
+            "Durée pour constituer le capital (en mois)",
+            min_value=1,
+            value=60
+        )
+
+    with col2:
+        fond_choisi = st.selectbox(
+            "Fonds sélectionné",
+            list(taux_fonds.keys())
+        )
+        taux_rendement_annuel = taux_fonds[fond_choisi]
+
+        # Options dynamiques selon la durée
+        options_type = ["unique"]
+        if duree_mois > 1:
+            options_type.append("mensuelle")
+        if duree_mois > 12:
+            options_type.append("annuelle")
+
+        type_contribution = st.selectbox(
+            "Type de contribution",
+            options_type
+        )
+
+# Calcul du capital cible
+if st.button("🚀 Calculer l’épargne nécessaire", use_container_width=True):
+    if choix:
+        capital_cible = depense_annuelle / taux_rendement_annuel
+    else:
+        capital_cible = depense_annuelle
+
+    montant, capital = montant_epargne_cible(
+        capital_cible, duree_mois, taux_rendement_annuel, type_contribution
+    )
 
 
+    Resultat_list = [type_contribution, duree_mois, fond_choisi, taux_rendement_annuel,capital_cible, montant]
 
+    # transformer en liste de lignes
+    Resultat_data = pd.DataFrame([Resultat_list], columns=['Periodicité', 'Horizon de placement', 'Fonds', 'Rendement', 'Capital cible','Épargne'])
+
+    st.dataframe(Resultat_data, use_container_width=True)
+
+    
+    st.success(f"Montant à épargner ({type_contribution}) : {montant:,.0f} FCFA")
+    #st.info(f"Capital cible à atteindre : {capital:,.0f} FCFA")
+    st.write(f"Fonds sélectionné : {fond_choisi} — rendement annuel de {taux_rendement_annuel*100:.2f}%")
+
+    
 # --- Pied de page ---
 st.markdown("""
 <footer>

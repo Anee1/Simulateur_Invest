@@ -50,3 +50,46 @@ def simulation(montant_initial,
 
     #valeur_finale = round(valeur, 2)
     return valeurs_annuelles
+
+
+
+def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel, type_contribution='mensuelle'):
+    """
+    Calcule le montant à épargner périodiquement pour constituer un capital 
+    dont les rendements couvrent une dépense annuelle donnée.
+
+    Paramètres :
+        depense_annuelle (float) : Montant annuel à financer uniquement via les rendements.
+        duree_mois (int) : Durée pour constituer le capital (en mois).
+        taux_rendement_annuel (float) : Rendement annuel attendu (ex: 0.06 pour 6%).
+        type_contribution (str) : 'mensuelle', 'annuelle' ou 'unique'.
+
+    Retourne :
+        float : Montant à épargner périodiquement.
+        float : Capital cible à atteindre pour couvrir la dépense.
+    """
+    # Capital nécessaire pour générer la dépense uniquement via les rendements
+    #capital_cible  = depense_annuelle / taux_rendement_annuel
+
+    # Conversion du taux annuel en taux mensuel
+    taux_mensuel = (1 + taux_rendement_annuel) ** (1 / 12) - 1
+
+    # Contribution unique
+    if type_contribution.lower() == 'unique':
+        montant = capital_necessaire / ((1 + taux_mensuel) ** duree_mois)
+
+    # Contributions mensuelles
+    elif type_contribution.lower() == 'mensuelle':
+        
+        montant = capital_necessaire * taux_mensuel / ((1 + taux_mensuel) ** duree_mois - 1)
+
+    # Contributions annuelles
+    elif type_contribution.lower() == 'annuelle':
+        duree_annees = duree_mois / 12
+        taux_annuel = taux_rendement_annuel
+        montant = capital_necessaire * taux_annuel / ((1 + taux_annuel) ** duree_annees - 1)
+
+    else:
+        raise ValueError("type_contribution doit être 'mensuelle', 'annuelle' ou 'unique'.")
+
+    return round(montant, 2), round(capital_necessaire, 2)
