@@ -72,7 +72,7 @@ st.markdown("""
 # --- Logo dans la sidebar ---
 logo_url = "https://unitedcapitalplcgroup.com/wp-content/uploads/2021/08/United-Capital-logo-websites.png"
 st.sidebar.image(logo_url, width=250)
-st.sidebar.markdown("<hr>", unsafe_allow_html=True)
+#st.sidebar.markdown("<hr>", unsafe_allow_html=True)
 st.sidebar.markdown("**Asset Management West Africa Limited**")
 
 # --- Titre principal ---
