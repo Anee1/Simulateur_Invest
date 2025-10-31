@@ -201,7 +201,7 @@ if st.button("🚀 Calculer l’épargne nécessaire", use_container_width=True)
     # transformer en liste de lignes
     Resultat_data = pd.DataFrame([Resultat_list], columns=['Periodicité', 'Horizon de placement', 'Fonds', 'Rendement', 'Capital cible','Épargne'])
 
-    st.dataframe(Resultat_data, use_container_width=True)
+    #st.dataframe(Resultat_data, use_container_width=True)
 
     
     st.success(f"Montant à épargner ({type_contribution}) : {montant:,.0f} FCFA")
