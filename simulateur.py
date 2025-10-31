@@ -91,7 +91,7 @@ Fonds disponibles et rendements annuels attendus :
 
 - **💎 United Capital Diamond Fund**  rendement annuel attendu : 8 %
 
-- **🔹 United Capital Sapphire Fund**  rendement annuel attendu : 9 %
+- **💎 United Capital Sapphire Fund**  rendement annuel attendu : 9 %
 """)
 
 # --- Saisie des informations ---
