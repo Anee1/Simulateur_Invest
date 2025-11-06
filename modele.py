@@ -58,7 +58,7 @@ def simulation(montant_initial,
 
 
 
-def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel, type_contribution='Mensuelle'):
+def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel, type_contribution):
     """
     Calcule le montant à épargner périodiquement pour constituer un capital cible.
     """
@@ -81,7 +81,7 @@ def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel,
     taux_par_periode = (1 + taux_rendement_annuel) ** (1 / periodes_par_an) - 1
 
     # Nombre total de périodes
-    duree_periodes = duree_mois / 12 * periodes_par_an
+    duree_periodes = duree_mois / (12 / periodes_par_an)
 
     # Calcul
     if type_contribution == 'Unique':
