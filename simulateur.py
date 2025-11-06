@@ -100,12 +100,22 @@ with st.expander("🧮 Paramètres de simulation", expanded=False):
     with col1:
         fond_choisi = st.selectbox("Fonds sélectionné", ["Unitid Capital Diamond", "United Capital Sapphire"])
         montant_initial = st.number_input("Montant initial (FCFA)", min_value=0, value=1_000_000)
+
+        depense_ann = f"{montant_initial:,.2f}".replace(',', ' ').replace('.', ',')
+
+        st.write(f"Montant Intial (FCFA) saisie : {depense_ann} FCFA")
+
         duree_investissement = st.number_input("Durée de l'investissement (années)", min_value=1, value=5)
         
     with col2:
         choix = st.checkbox("Activer les versements périodiques", value=False)
         if choix:
             montant_periodique = st.number_input("Montant périodique (FCFA)", min_value=0, value=100_000)
+
+            depense_anne = f"{montant_periodique:,.2f}".replace(',', ' ').replace('.', ',')
+
+            st.write(f"Montant Intial (FCFA) saisie : {depense_anne} FCFA")
+
             frequence = st.selectbox("Fréquence des contributions", ["Mensuelle",'Trimestrielle', 'Semestrielle', "Annuelle"])
             annees_contributions = st.number_input("Durée des contributions (années)", min_value=0, value=0, max_value=duree_investissement)
         else:
@@ -163,6 +173,10 @@ with st.expander("🧮 Paramètres de l’épargne pour couvrir une dépense", e
             min_value=0,
             value=1000
         )
+
+        depense_an = f"{ depense_annuelle:,.2f}".replace(',', ' ').replace('.', ',')
+
+        st.write(f"Dépense annuelle à couvrir ou capital cible (FCFA) saisie : {depense_an} FCFA")
 
         duree_mois = st.number_input(
             "Durée pour constituer le capital (en mois)",
