@@ -89,9 +89,9 @@ Ce simulateur vous permet d’estimer :
 
 Fonds disponibles et rendements annuels attendus :
 
-- **💎 United Capital Diamond Fund**  rendement annuel attendu : 8 %
+- **💎 FCP United Capital Diamond**  rendement annuel attendu : 8 %
 
-- **💎 United Capital Sapphire Fund**  rendement annuel attendu : 9 %
+- **💎 FCP United Capital Sapphire**  rendement annuel attendu : 9 %
 """)
 
 # --- Saisie des informations ---
@@ -168,6 +168,12 @@ with st.expander("🧮 Paramètres de l’épargne pour couvrir une dépense", e
     with col1:
         choix = st.checkbox("Cocher pour estimer combien épargner pour que le rendement couvre votre charge")
 
+
+        fond_choisi = st.selectbox(
+            "Fonds sélectionné",
+            list(taux_fonds.keys())
+        )
+        taux_rendement_annuel = taux_fonds[fond_choisi]
         depense_annuelle = st.number_input(
             "Dépense annuelle à couvrir ou capital cible (FCFA)",
             min_value=0,
@@ -178,19 +184,17 @@ with st.expander("🧮 Paramètres de l’épargne pour couvrir une dépense", e
 
         st.write(f"Dépense annuelle à couvrir ou capital cible (FCFA) saisie : {depense_an} FCFA")
 
+        
+
+
+
+    with col2:
+        
         duree_mois = st.number_input(
             "Durée pour constituer le capital (en mois)",
             min_value=1,
             value=60
         )
-
-    with col2:
-        fond_choisi = st.selectbox(
-            "Fonds sélectionné",
-            list(taux_fonds.keys())
-        )
-        taux_rendement_annuel = taux_fonds[fond_choisi]
-
         # Options dynamiques selon la durée
         options_type = ["Unique"]
 
