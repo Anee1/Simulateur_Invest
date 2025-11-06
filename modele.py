@@ -7,89 +7,87 @@ def simulation(montant_initial,
                frequence='Mensuelle', 
                annees_contributions=3):
     """
-    Évalue la valeur finale d’un investissement avec capitalisation.
+    Évalue la valeur finale d’un investissement avec capitalisation composée.
 
     Paramètres :
         montant_initial (float) : Capital de départ.
         duree_investissement (int) : Durée totale en années.
-        taux_rendement (float) : Rendement annuel (ex : 0.05 pour 5%).
+        taux_rendement (float) : Rendement annuel composé (ex : 0.05 pour 5%).
         montant_periodique (float) : Versement périodique (par défaut 0).
-        frequence (str) : 'Mensuelle' ou 'Annuelle'.
+        frequence (str) : 'Mensuelle', 'Trimestrielle', 'Semestrielle' ou 'Annuelle'.
         annees_contributions (int) : Durée des versements périodiques (en années).
     
     Retourne :
         list : Valeur du portefeuille à la fin de chaque année.
-        float : Valeur finale estimée.
     """
 
-    if frequence.lower() == 'mensuelle':
+    frequence = frequence.lower()
+
+    if frequence == 'mensuelle':
         periodes_par_an = 12
-    elif frequence.lower() == 'trimestrielle':
+    elif frequence == 'trimestrielle':
         periodes_par_an = 4
+    elif frequence == 'semestrielle':
+        periodes_par_an = 2
     else:
         periodes_par_an = 1  # annuelle
 
-    rendement_par_periode = taux_rendement / periodes_par_an
+    # Conversion du taux annuel en taux équivalent par période
+    rendement_par_periode = (1 + taux_rendement)**(1 / periodes_par_an) - 1
+
     total_periodes = duree_investissement * periodes_par_an
     periodes_contributions = annees_contributions * periodes_par_an
 
     valeur = montant_initial
     valeurs_annuelles = []
 
-    for periode in range(1, int(total_periodes) + 1):
-        # D'abord, appliquer le rendement sur le capital existant
+    for periode in range(1, int(total_periodes)+1):
+        # Capitalisation
         valeur *= (1 + rendement_par_periode)
 
-        # Ensuite, verser la contribution (à partir de la 2e période)
-        if periode <= periodes_contributions and periode > 1:
+        # Versement périodique
+        if periode <= periodes_contributions :
             valeur += montant_periodique
 
-        # Stocker la valeur à la fin de chaque année
-        if periode % periodes_par_an == 0:
+        # Enregistrer la valeur à la fin de chaque année
+
+        if periode % periodes_par_an == 0 :
             valeurs_annuelles.append(round(valeur, 2))
 
-    #valeur_finale = round(valeur, 2)
     return valeurs_annuelles
 
 
 
-def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel, type_contribution='mensuelle'):
+def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel, type_contribution='Mensuelle'):
     """
-    Calcule le montant à épargner périodiquement pour constituer un capital 
-    dont les rendements couvrent une dépense annuelle donnée.
-
-    Paramètres :
-        depense_annuelle (float) : Montant annuel à financer uniquement via les rendements.
-        duree_mois (int) : Durée pour constituer le capital (en mois).
-        taux_rendement_annuel (float) : Rendement annuel attendu (ex: 0.06 pour 6%).
-        type_contribution (str) : 'mensuelle', 'annuelle' ou 'unique'.
-
-    Retourne :
-        float : Montant à épargner périodiquement.
-        float : Capital cible à atteindre pour couvrir la dépense.
+    Calcule le montant à épargner périodiquement pour constituer un capital cible.
     """
-    # Capital nécessaire pour générer la dépense uniquement via les rendements
-    #capital_cible  = depense_annuelle / taux_rendement_annuel
+    type_contribution = type_contribution.capitalize()  # Sensible à la casse
 
-    # Conversion du taux annuel en taux mensuel
-    taux_mensuel = (1 + taux_rendement_annuel) ** (1 / 12) - 1
-
-    # Contribution unique
-    if type_contribution.lower() == 'unique':
-        montant = capital_necessaire / ((1 + taux_mensuel) ** duree_mois)
-
-    # Contributions mensuelles
-    elif type_contribution.lower() == 'mensuelle':
-        
-        montant = capital_necessaire * taux_mensuel / ((1 + taux_mensuel) ** duree_mois - 1)
-
-    # Contributions annuelles
-    elif type_contribution.lower() == 'annuelle':
-        duree_annees = duree_mois / 12
-        taux_annuel = taux_rendement_annuel
-        montant = capital_necessaire * taux_annuel / ((1 + taux_annuel) ** duree_annees - 1)
-
+    if type_contribution == "Mensuelle":
+        periodes_par_an = 12
+    elif type_contribution == "Trimestrielle":
+        periodes_par_an = 4
+    elif type_contribution == "Semestrielle":
+        periodes_par_an = 2
+    elif type_contribution == "Annuelle":
+        periodes_par_an = 1
+    elif type_contribution == "Unique":
+        periodes_par_an = 1
     else:
-        raise ValueError("type_contribution doit être 'mensuelle', 'annuelle' ou 'unique'.")
+        raise ValueError("type_contribution doit être 'Unique', 'Mensuelle', 'Trimestrielle', 'Semestrielle' ou 'Annuelle'.")
 
-    return round(montant, 2), round(capital_necessaire, 2)
+    # Conversion du taux annuel en taux équivalent par période
+    taux_par_periode = (1 + taux_rendement_annuel) ** (1 / periodes_par_an) - 1
+
+    # Nombre total de périodes
+    duree_periodes = duree_mois / 12 * periodes_par_an
+
+    # Calcul
+    if type_contribution == 'Unique':
+        montant = capital_necessaire / ((1 + taux_par_periode) ** duree_periodes)
+    else:
+        montant = capital_necessaire * taux_par_periode / ((1 + taux_par_periode) ** duree_periodes - 1)
+
+    return round(montant, 3), round(capital_necessaire, 2)
+

@@ -98,15 +98,16 @@ Fonds disponibles et rendements annuels attendus :
 with st.expander("🧮 Paramètres de simulation", expanded=False):     
     col1, col2 = st.columns(2)
     with col1:
+        fond_choisi = st.selectbox("Fonds sélectionné", ["Unitid Capital Diamond", "United Capital Sapphire"])
         montant_initial = st.number_input("Montant initial (FCFA)", min_value=0, value=1_000_000)
         duree_investissement = st.number_input("Durée de l'investissement (années)", min_value=1, value=5)
-        fond_choisi = st.selectbox("Fonds sélectionné", ["Unitid Capital Dimond", "United Capital Sapphire"])
+        
     with col2:
         choix = st.checkbox("Activer les versements périodiques", value=False)
         if choix:
             montant_periodique = st.number_input("Montant périodique (FCFA)", min_value=0, value=100_000)
-            frequence = st.selectbox("Fréquence des contributions", ["Mensuelle", "Annuelle"])
-            annees_contributions = st.number_input("Durée des contributions (années)", min_value=0, value=3, max_value=duree_investissement)
+            frequence = st.selectbox("Fréquence des contributions", ["Mensuelle",'Trimestrielle', 'Semestrielle', "Annuelle"])
+            annees_contributions = st.number_input("Durée des contributions (années)", min_value=0, value=0, max_value=duree_investissement)
         else:
             montant_periodique = 0
             frequence = "Annuelle"
@@ -114,7 +115,7 @@ with st.expander("🧮 Paramètres de simulation", expanded=False):
 
 # --- Données de rendement ---
 Rendement_dict = {
-    "Unitid Capital Dimond": 0.08,
+    "Unitid Capital Diamond": 0.08,
     "United Capital Sapphire": 0.09
 }
 
@@ -134,8 +135,12 @@ if st.button("🚀 Lancer la simulation", use_container_width=True):
         columns=colonnes
     )
 
-    st.subheader("📊 Résultats de la simulation")
-    st.dataframe(resultats, use_container_width=True)
+    df_formate = resultats.copy()
+    for col in df_formate.select_dtypes(include='number').columns:
+        df_formate[col] = df_formate[col].apply(lambda x: f"{x:,.0f}".replace(',', ' '))
+
+    st.subheader("📊 Résultats de la simulation (FCFA)")
+    st.dataframe(df_formate, use_container_width=True)
 
 
 
@@ -173,11 +178,20 @@ with st.expander("🧮 Paramètres de l’épargne pour couvrir une dépense", e
         taux_rendement_annuel = taux_fonds[fond_choisi]
 
         # Options dynamiques selon la durée
-        options_type = ["unique"]
-        if duree_mois > 1:
-            options_type.append("mensuelle")
-        if duree_mois > 12:
-            options_type.append("annuelle")
+        options_type = ["Unique"]
+
+        if duree_mois >= 1:
+            options_type.append("Mensuelle")
+
+        if duree_mois >= 3:
+            options_type.append("Trimestrielle")
+
+        if duree_mois >= 6:
+            options_type.append("Semestrielle")
+
+        if duree_mois >= 12:
+            options_type.append("Annuelle")
+
 
         type_contribution = st.selectbox(
             "Type de contribution",
@@ -203,8 +217,9 @@ if st.button("🚀 Calculer l’épargne nécessaire", use_container_width=True)
 
     #st.dataframe(Resultat_data, use_container_width=True)
 
-    
-    st.success(f"Montant à épargner ({type_contribution}) : {montant:,.0f} FCFA")
+    montant= f"{montant:,.2f}".replace(',', ' ').replace('.', ',')
+
+    st.success(f"Montant à épargner ({type_contribution}) : {montant} FCFA")
     #st.info(f"Capital cible à atteindre : {capital:,.0f} FCFA")
     st.write(f"Fonds sélectionné : {fond_choisi} — rendement annuel de {taux_rendement_annuel*100:.2f}%")
 
