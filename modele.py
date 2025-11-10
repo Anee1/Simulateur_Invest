@@ -151,7 +151,7 @@ def generate_pdf(logo_url, fond_choisi, taux_rendement, montant_initial, choix, 
     elements.append(Spacer(1, 15))
 
 
-    taux_rendement = taux_rendement * 100  # Convertir en pourcentage
+    taux_rendement = int(taux_rendement * 100)  # Convertir en pourcentage
     # Paramètres de simulation
     if choix:
         param_text = f"""
