@@ -113,6 +113,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
+
 def generate_pdf(logo_url, fond_choisi, taux_rendement, montant_initial, choix, horizon, frequence, annees_contributions, df_resultats, montant_periodique):
     """
     Génère un rapport PDF stylisé de simulation d’investissement.
