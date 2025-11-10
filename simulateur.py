@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from modele import simulation , montant_epargne_cible
+from modele import simulation , montant_epargne_cible,  generate_pdf
+
 
 
 # --- Configuration générale ---
@@ -151,6 +152,18 @@ if st.button("🚀 Lancer la simulation", use_container_width=True):
 
     st.subheader("📊 Résultats de la simulation (FCFA)")
     st.dataframe(df_formate, use_container_width=True)
+
+
+    # --- BOUTON DE TÉLÉCHARGEMENT ---
+    horizon = duree_investissement
+    df_resultats = df_formate
+    pdf_buffer =generate_pdf(logo_url, fond_choisi, taux_rendement, montant_initial,choix, horizon,frequence,annees_contributions, df_resultats, montant_periodique)
+    st.download_button(
+        label="📄 Télécharger le rapport PDF",
+        data=pdf_buffer,
+        file_name="rapport_simulation.pdf",
+        mime="application/pdf"
+    )
 
 
 

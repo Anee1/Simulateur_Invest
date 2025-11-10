@@ -1,5 +1,11 @@
 import numpy as np 
 
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet
+
 def simulation(montant_initial, 
                duree_investissement, 
                taux_rendement, 
@@ -90,4 +96,123 @@ def montant_epargne_cible(capital_necessaire, duree_mois, taux_rendement_annuel,
         montant = capital_necessaire * taux_par_periode / ((1 + taux_par_periode) ** duree_periodes - 1)
 
     return round(montant, 3), round(capital_necessaire, 2)
+
+
+
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+
+def generate_pdf(logo_url, fond_choisi, taux_rendement, montant_initial, choix, horizon, frequence, annees_contributions, df_resultats, montant_periodique):
+    """
+    Génère un rapport PDF stylisé de simulation d’investissement.
+    """
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4,
+                            rightMargin=30, leftMargin=30,
+                            topMargin=30, bottomMargin=30)
+    
+    # Styles personnalisés
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='TitleCenter', parent=styles['Title'], alignment=TA_CENTER, textColor=colors.red))
+    styles.add(ParagraphStyle(name='HeadingRed', parent=styles['Heading2'], textColor=colors.red))
+    styles.add(ParagraphStyle(name='BodyJustify', parent=styles['BodyText'], alignment=TA_LEFT, leading=14))
+    styles.add(ParagraphStyle(name='SubLogo', alignment=TA_CENTER, textColor=colors.grey, fontSize=9, leading=10))
+    
+    elements = []
+
+    # Logo + nom de l'entreprise
+    elements.append(Image(logo_url, width=120, height=50))
+    elements.append(Paragraph("Asset Management West Africa Limited", styles['SubLogo']))
+    elements.append(Spacer(1, 15))
+
+    # Titre
+    title = Paragraph("Rapport de Simulation d'Investissement", styles["TitleCenter"])
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    # Introduction
+    intro_text = (
+        "Ce rapport présente les résultats d’une simulation réalisée afin d’évaluer "
+        "l’évolution potentielle d’un investissement en fonction des paramètres sélectionnés."
+    )
+    elements.append(Paragraph(intro_text, styles['BodyJustify']))
+    elements.append(Spacer(1, 15))
+
+    # Paramètres de simulation
+    if choix:
+        param_text = f"""
+        <b>Paramètres de simulation :</b><br/>
+        - Fonds : {fond_choisi}<br/>
+        - Montant initial : {montant_initial:,.0f} FCFA<br/>
+        - Horizon d’investissement : {horizon} ans<br/>
+        - Rendement annuel attendu : {taux_rendement}%<br/>
+        - Montant périodique : {montant_periodique:,.0f} FCFA<br/>
+        - Périodicité des versements : {frequence}<br/>
+        - Durée des contributions (années) : {annees_contributions}<br/>
+        """
+    else:
+        param_text = f"""
+        <b>Paramètres de simulation :</b><br/>
+        - Fonds : {fond_choisi}<br/>
+        - Montant initial : {montant_initial:,.0f} FCFA<br/>
+        - Horizon d’investissement : {horizon} ans<br/>
+        - Rendement annuel attendu : {taux_rendement}%<br/>
+        """
+    elements.append(Paragraph(param_text, styles['BodyJustify']))
+    elements.append(Spacer(1, 15))
+
+    # Résultats de simulation
+    elements.append(Paragraph("Résultats de la simulation :", styles['HeadingRed']))
+    
+    df_display = df_resultats.copy()
+    df_display.reset_index(inplace=True)
+    df_display.rename(columns={'index': 'Index'}, inplace=True)
+
+    table_data = [df_display.columns.tolist()] + df_display.values.tolist()
+    
+    table = Table(table_data, hAlign='CENTER')
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.red),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 11),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.Color(1, 0.9, 0.9)),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+    ])
+    table.setStyle(table_style)
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    # Interprétation
+    interpretation = (
+        "Ces résultats reflètent une estimation basée sur les hypothèses définies. "
+        "Ils ne constituent pas une garantie de performance future."
+    )
+    elements.append(Paragraph(interpretation, styles['BodyJustify']))
+    elements.append(Spacer(1, 20))
+
+    # Pied de page
+    footer = Paragraph(
+        "<font size=8>Document généré automatiquement par l’outil de simulation UCAMWAL.</font>",
+        styles["Normal"]
+    )
+    elements.append(footer)
+
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
+
 
