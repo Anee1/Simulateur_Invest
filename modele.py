@@ -45,7 +45,10 @@ def simulation(montant_initial,
     periodes_contributions = annees_contributions * periodes_par_an
 
     valeur = montant_initial
+    Valeur_E = montant_initial
     valeurs_annuelles = []
+    valeurs_E_annuelles = []
+    
 
     for periode in range(1, int(total_periodes)+1):
         # Capitalisation
@@ -54,13 +57,15 @@ def simulation(montant_initial,
         # Versement périodique
         if periode <= periodes_contributions :
             valeur += montant_periodique
+            Valeur_E += montant_periodique
 
         # Enregistrer la valeur à la fin de chaque année
 
         if periode % periodes_par_an == 0 :
             valeurs_annuelles.append(round(valeur, 2))
+            valeurs_E_annuelles.append(round(Valeur_E, 2))
 
-    return valeurs_annuelles
+    return valeurs_annuelles , valeurs_E_annuelles
 
 
 
