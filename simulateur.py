@@ -135,14 +135,14 @@ if st.button("🚀 Lancer la simulation", use_container_width=True):
     taux_rendement = Rendement_dict[fond_choisi]
     
     valeurs_, valeurs_E = simulation(montant_initial, duree_investissement, taux_rendement, montant_periodique, frequence, annees_contributions)
-    valeurs_dat, valeurs_E_dat = simulation(montant_initial, duree_investissement, 0.06, montant_periodique, frequence, annees_contributions)
+    valeurs_dat, valeurs_E_dat = simulation(montant_initial, duree_investissement, 0.03, montant_periodique, frequence, annees_contributions)
     
     ecart = list(np.array(valeurs_) - np.array(valeurs_dat))
     colonnes = [f"Année {i+1}" for i in range(duree_investissement)]
     
     resultats = pd.DataFrame(
         [valeurs_, valeurs_dat, ecart,valeurs_E],
-        index=[f"{fond_choisi}", "DAT 6%", f"Écart ({fond_choisi} - DAT)","Montant Épargné"],
+        index=[f"{fond_choisi}", "DAT 3%", f"Écart ({fond_choisi} - DAT)","Montant Épargné"],
         columns=colonnes
     )
 
