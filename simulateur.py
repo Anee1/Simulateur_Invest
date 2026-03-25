@@ -93,7 +93,7 @@ Fonds disponibles et rendements annuels attendus :
 
 - **💎 FCP United Capital Diamond**  rendement annuel attendu : 7 %
 
-- **💎 FCP United Capital Sapphire**  rendement annuel attendu : 24 %
+- **💎 FCP United Capital Sapphire**  rendement annuel attendu : 9 %
 """)
 
 # --- Saisie des informations ---
@@ -128,7 +128,7 @@ with st.expander("🧮 Paramètres de simulation", expanded=False):
 # --- Données de rendement ---
 Rendement_dict = {
     "Unitid Capital Diamond": 0.07,
-    "United Capital Sapphire": 0.24
+    "United Capital Sapphire": 0.09
 }
 
 # --- Calcul ---
@@ -171,7 +171,7 @@ if st.button("🚀 Lancer la simulation", use_container_width=True):
 # Dictionnaire des fonds et leurs rendements annuels
 taux_fonds = {
     "United Capital Diamond": 0.07,
-    "United Capital Sapphire": 0.24
+    "United Capital Sapphire": 0.09
 }
 
 
